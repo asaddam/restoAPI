@@ -17,6 +17,17 @@ class UserSerializer(serializers.ModelSerializer):
         yang dienkrip dan mengembalikkannya"""
         return get_user_model().objects.create_user(**validated_data)
 
+    def update(self, instance, validated_data):
+        """Update user"""
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user
+
 
 class AuthTokenSerializer(serializers.Serializer):
     """serializer untuk autentikasi user"""
